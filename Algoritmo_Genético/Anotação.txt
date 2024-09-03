@@ -1,0 +1,71 @@
+O numpy é uma biblioteca que fornece uma estrutura de dados eficiente para trabalhar com grandes arrays 
+e matrizes multidimensionais, além de oferecer um conjunto robusto de funções matemáticas para operar sobre 
+esses dados.
+
+A biblioteca random é usada para gerar números aleatórios e realizar operações aleatórias.
+
+A biblioteca operator exporta um conjunto de funções padrão correspondentes a operadores como adição, 
+subtração, multiplicação, etc.
+
+O pandas é uma biblioteca usada para manipulação e análise de dados. Ela fornece estruturas de dados 
+rápidas e flexíveis, como DataFrames (semelhantes a tabelas de banco de dados ou planilhas), que são
+ideais para trabalhar com dados tabulares. 
+
+O matplotlib.pyplot é uma coleção de funções de estilo MATLAB que faz parte do matplotlib, 
+uma biblioteca de plotagem 2D em Python. Ela permite criar gráficos estáticos, animados e 
+interativos de alta qualidade. O pyplot simplifica o processo de criação de gráficos como linhas,
+ dispersões, histogramas, barras, etc.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Gene = Cidade
+cromossomo = rota = lista de cidades
+população = lista de rotas
+
+
+ESTRATÉGIA
+
+- criar uma cidade (nó) com sua respectiva coordenada
+- calcular a distância da cidade atual (self) até a outra cidade (city), calculando a distância 
+eucledianda delas utilizando a fórmula
+- Teorema de pitágoras = raiz quadrada da soma dos quadrados das diferenças das coordenadas x e y
+- calcular a aptidão (fitness) para avaliar a qualidade de uma rota no problema - quanto maior a aptidão,
+menor a distância da rota -
+- Criação de um DataFrame:
+A lista populacaoClassificada é convertida em um DataFrame do Pandas para facilitar as manipulações e cálculos.
+As colunas do DataFrame são "Índice" (índice do indivíduo) e "Aptidão" (valor de aptidão).
+- Cálculo da Aptidão Cumulativa:
+É criada uma nova coluna "soma_cumulativa" no DataFrame. 
+Essa coluna contém a soma cumulativa da aptidão de todos os indivíduos até aquele ponto. 
+Essa informação é fundamental para o cálculo das probabilidades de seleção.
+- Cálculo da Probabilidade Cumulativa:
+É criada outra nova coluna "perc_cumulativo". 
+Essa coluna representa a probabilidade cumulativa de cada indivíduo ser selecionado. 
+A probabilidade é calculada como a proporção da soma cumulativa da aptidão do indivíduo em relação à 
+soma total da aptidão da população.
+- Seleção por Roleta:
+Para os demais indivíduos, é utilizada a técnica da roleta. 
+Um número aleatório entre 0 e 100 é gerado. Esse número é comparado com os valores da coluna
+"perc_cumulativo". O primeiro indivíduo cuja probabilidade cumulativa for maior ou igual ao número
+aleatório é selecionado. Essa técnica garante que indivíduos com maior aptidão tenham maior probabilidade
+de serem selecionados, mas não garante que os melhores sejam sempre escolhidos, permitindo a exploração
+de outras regiões do espaço de busca.
+- A função cruzar realiza o cruzamento entre dois pais, 
+criando um novo filho. O processo envolve a seleção de pontos de cruzamento aleatórios, 
+a cópia de genes dos pais entre esses pontos e a combinação dos genes para formar o filho. 
+Esse é um dos operadores básicos utilizados em algoritmos genéticos para introduzir diversidade na população
+e explorar novas soluções.
+- A função cruzar_populacao realiza o cruzamento entre os indivíduos do pool de acasalamento para 
+gerar uma nova população de filhos. Ela preserva os indivíduos da elite diretamente e realiza cruzamentos 
+aleatórios entre os demais indivíduos. Essa função é essencial para introduzir diversidade na população e 
+explorar novas soluções no algoritmo genético.
+- A função mutar realiza a operação de mutação sobre um indivíduo. 
+Ela percorre cada gene do indivíduo e, com uma probabilidade determinada pela taxa de mutação,
+troca o valor desse gene com o valor de outro gene selecionado aleatoriamente. A mutação é uma 
+operação importante em algoritmos genéticos, pois introduz diversidade na população, permitindo a 
+exploração de novas soluções.
+- A função mutar_populacao aplica a operação de mutação a cada indivíduo da população. 
+Ela chama a função mutar para cada indivíduo, passando a taxa de mutação desejada.
+Isso é importante para introduzir diversidade na população e explorar novas soluções no algoritmo genético.
+
+
+
