@@ -1,17 +1,10 @@
 import random
 import math
+import networkx as nx
+import matplotlib.pyplot as plt
+import time
 
 
-<<<<<<< Updated upstream
-def ler_arquivo(nome_arquivo):
-    with open(nome_arquivo, 'r') as arquivo:
-        linhas = arquivo.readlines()
-    num_vertices = len(linhas)
-    grafo = [[0] * 3 for _ in range(num_vertices)]
-    for i, linha in enumerate(linhas):
-        valores = linha.split()
-        grafo[i] = [int(valores[0]), float(valores[1]), float(valores[2])]
-=======
 def ler_arquivo(arquivo):
     grafo = {}
     with open(arquivo, 'r') as arq:
@@ -19,7 +12,6 @@ def ler_arquivo(arquivo):
             valores = linha.split()
             vertice_id = int(valores[0])
             grafo[vertice_id] = (float(valores[1]), float(valores[2]))
->>>>>>> Stashed changes
     return grafo
 
 
@@ -29,19 +21,14 @@ def calcular_distancia(x1, y1, x2, y2):
 
 def vizinho_mais_proximo(grafo):
     print("Começando . . .")
-<<<<<<< Updated upstream
-    vertice_atual = random.choice(range(len(grafo)))
-    caminho_final = [vertice_atual]
-    vertices_restantes = [i for i in range(len(grafo)) if i != vertice_atual]
-=======
     vertice_atual = random.choice(list(grafo.keys()))
     caminho_final = set()
     caminho_final.add(vertice_atual)
     vertices_restantes = set(grafo.keys())
     vertices_restantes.discard(vertice_atual)
->>>>>>> Stashed changes
     custo = 0
 
+    inicio = time.time()
     while len(vertices_restantes) != 0:
         distancia_minima = float('inf')
         proximo_vertice = None
@@ -54,35 +41,71 @@ def vizinho_mais_proximo(grafo):
                 proximo_vertice = i
         custo += distancia_minima
 
-<<<<<<< Updated upstream
-        caminho_final = caminho_final + [proximo_vertice]  #adiciona ao caminho final
-        vertices_restantes = [v for v in vertices_restantes if v != proximo_vertice]  #remove da lista de restantes
-        vertice_atual = proximo_vertice  #atualiza o vertice atual
-
-    custo += calcular_distancia(grafo[vertice_atual][1], grafo[vertice_atual][2], grafo[caminho_final[0]][1],grafo[caminho_final[0]][2])
-    caminho_final = caminho_final + [caminho_final][0]
-=======
         caminho_final.add(proximo_vertice)
         vertices_restantes.discard(proximo_vertice)
         vertice_atual = proximo_vertice
 
     custo += calcular_distancia(grafo[vertice_atual][0], grafo[vertice_atual][1],
-                                grafo[list(caminho_final)[-1]][0], grafo[list(caminho_final)[-1]][1])
+                                grafo[list(caminho_final)[-1]][0], 
+                                grafo[list(caminho_final)[-1]][1])
     caminho_final.add(list(caminho_final)[0])
->>>>>>> Stashed changes
+    fim = time.time()
+    tempo_execucao = fim - inicio
 
-    return custo
+    return custo, caminho_final, tempo_execucao
 
 
-custos = ""
-nome_arquivo = "coordenadas.txt"
-for i in range(30):
-    Grafo = ler_arquivo(nome_arquivo)
-    custo = vizinho_mais_proximo(Grafo)
-    custos += str(custo) + ","
-    print(f"Execução {i + 1}: Custo = {custo}")
+def imprime_resultados(custos, tempos):
+    media_custos = sum(custos) / len(custos)
+    media_tempos = sum(tempos) / len(tempos)
+    print(f"Média dos custos após 30 execuções: {media_custos}")
+    print(f"Média dos tempos após 30 execuções: {media_tempos}")
 
-custos_lista = [float(custo) for custo in custos.strip(',').split(',')]
 
-media_custos = sum(custos_lista) / len(custos_lista)
-print(f"Média dos custos após 30 execuções: {media_custos}")
+def salvar_resultados(custos, caminhos, tempos, arquivo_nome):
+    with open(arquivo_nome, 'w') as arq_nome:
+        for i, (custo, caminho, tempo) in enumerate(zip(custos, caminhos, tempos)):
+            arq_nome.write(f"Execucao {i + 1}: Custo = {custo}, Caminho = {caminho} e Tempo = {tempo}\n")
+        media_custos = sum(custos) / len(custos)
+        media_tempos = sum(tempos) / len(tempos)
+        arq_nome.write(f"Média dos custos após 30 execuções: {media_custos}\n")
+        arq_nome.write(f"Média dos tempos após 30 execuções: {media_tempos}\n")
+
+
+def plot_grafo(grafo):
+    G = nx.Graph()
+    for vertice, coordenadas in grafo.items():
+        G.add_node(vertice, pos=coordenadas)
+    for vertice in grafo:
+        for vizinho in grafo:
+            if vertice != vizinho:
+                distancia = calcular_distancia(grafo[vertice][0], 
+                                                grafo[vertice][1], 
+                                                grafo[vizinho][0], 
+                                                grafo[vizinho][1])
+                if distancia < 10:
+                    G.add_edge(vertice, vizinho)
+    pos = nx.get_node_attributes(G, "pos")
+    nx.draw(G, pos, with_labels=True, node_color="lightblue", edge_color="gray")
+    plt.show()
+
+
+def main():
+    nome_arquivo = "coordenadas.txt"
+    custos = []
+    caminhos = []
+    tempos = []
+    for i in range(30):
+        Grafo = ler_arquivo(nome_arquivo)
+        custo, caminho, tempo = vizinho_mais_proximo(Grafo)
+        custos.append(custo)
+        caminhos.append(caminho)
+        tempos.append(tempo)
+        print(f"Execução {i + 1}: Custo = {custo}")
+    imprime_resultados(custos, tempos)
+    salvar_resultados(custos, caminhos, tempos, "resultados.txt")
+    plot_grafo(Grafo)
+
+
+if __name__ == "__main__":
+    main()
