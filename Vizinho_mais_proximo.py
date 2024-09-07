@@ -22,8 +22,7 @@ def calcular_distancia(x1, y1, x2, y2):
 def vizinho_mais_proximo(grafo):
     print("Começando . . .")
     vertice_atual = random.choice(list(grafo.keys()))
-    caminho_final = set()
-    caminho_final.add(vertice_atual)
+    caminho_final = [vertice_atual]
     vertices_restantes = set(grafo.keys())
     vertices_restantes.discard(vertice_atual)
     custo = 0
@@ -34,21 +33,21 @@ def vizinho_mais_proximo(grafo):
         proximo_vertice = None
         for i in vertices_restantes:
             distancia = calcular_distancia(grafo[vertice_atual][0],  
-                                           grafo[vertice_atual][1],  
-                                           grafo[i][0], grafo[i][1])
+                                        grafo[vertice_atual][1],  
+                                        grafo[i][0], grafo[i][1])
             if distancia < distancia_minima:
                 distancia_minima = distancia
                 proximo_vertice = i
         custo += distancia_minima
 
-        caminho_final.add(proximo_vertice)
+        caminho_final.append(proximo_vertice)
         vertices_restantes.discard(proximo_vertice)
         vertice_atual = proximo_vertice
 
     custo += calcular_distancia(grafo[vertice_atual][0], grafo[vertice_atual][1],
-                                grafo[list(caminho_final)[-1]][0], 
-                                grafo[list(caminho_final)[-1]][1])
-    caminho_final.add(list(caminho_final)[0])
+                                grafo[caminho_final[0]][0], 
+                                grafo[caminho_final[0]][1])
+    caminho_final.append(caminho_final[0])
     fim = time.time()
     tempo_execucao = fim - inicio
 
@@ -72,21 +71,16 @@ def salvar_resultados(custos, caminhos, tempos, arquivo_nome):
         arq_nome.write(f"Média dos tempos após 30 execuções: {media_tempos}\n")
 
 
-def plot_grafo(grafo):
+def plot_grafo(grafo, caminho):
     G = nx.Graph()
     for vertice, coordenadas in grafo.items():
         G.add_node(vertice, pos=coordenadas)
-    for vertice in grafo:
-        for vizinho in grafo:
-            if vertice != vizinho:
-                distancia = calcular_distancia(grafo[vertice][0], 
-                                                grafo[vertice][1], 
-                                                grafo[vizinho][0], 
-                                                grafo[vizinho][1])
-                if distancia < 10:
-                    G.add_edge(vertice, vizinho)
+    for i in range(len(caminho) - 1):
+        G.add_edge(caminho[i], caminho[i + 1])
     pos = nx.get_node_attributes(G, "pos")
-    nx.draw(G, pos, with_labels=True, node_color="lightblue", edge_color="gray")
+    nx.draw(G, pos, with_labels=False, node_color="lightblue", edge_color="gray")
+    nx.draw_networkx_edges(G, pos, edgelist=[(caminho[i], caminho[i + 1]) 
+                            for i in range(len(caminho) - 1)], edge_color="red")
     plt.show()
 
 
@@ -104,7 +98,7 @@ def main():
         print(f"Execução {i + 1}: Custo = {custo}")
     imprime_resultados(custos, tempos)
     salvar_resultados(custos, caminhos, tempos, "resultados.txt")
-    plot_grafo(Grafo)
+    plot_grafo(Grafo, caminhos[0])
 
 
 if __name__ == "__main__":
