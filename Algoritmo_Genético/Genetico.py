@@ -2,6 +2,7 @@
 from random import random, randint, seed
 from typing import List, Tuple, Callable
 from math import floor
+import time
 import math
 
 berlin52 = [None]*52
@@ -86,7 +87,7 @@ def aptidao_individuo(individuo):
         #if pos == len(individuo)-1:
             #print('aaa')
             
-    distancia += distEuc(x2, y2, 565, 575)
+    distancia += distEuc(x2, y2, x, y)
     return 1/distancia, distancia
 
 def aptidao_populacao(populacao):
@@ -109,7 +110,7 @@ def preenche_filho(filho, tamanho, pai, ponto_cruzamento):
     return filho
                 
     
-def cruzamento_pais (pai1, pai2, taxa_cruzamento):   #crossover com OX
+def cruzamento_pais (pai1, pai2, taxa_cruzamento):
     if random() <= taxa_cruzamento:
         tam_pai = len(pai1)
         ponto_cruzamento = randint(1, tam_pai - 1)
@@ -160,7 +161,7 @@ def torneio(populacao, lista_apt):
             return p1
     return p2
     
-def roleta(populacao, lista_apt):   # <---- nem ajeitei essa funcao roleta, pode jogar fora
+def roleta(populacao, lista_apt):
     soma_atual = 0
     soma_roleta = sum(lista_apt)
     n_sorteado = random() * soma_roleta
@@ -269,23 +270,28 @@ def evolucao(pontos, tamanho, qtd_guloso, grafo, taxa_cruzamento, taxa_mutacao, 
         print('menor-custo->', min(total))
         print('****************************************************')
         pop, lista_apt = selecao_sobreviventes(pop, lista_apt, filhos, apt_filhos, tam_elite)
-    print('CUSTO MÍNIMO ENCONTRADO EM %d GERACOES ->' %(n_geracoes), min(total))
+    menor_custo = min(total)
+    print('CUSTO MÍNIMO ENCONTRADO EM %d GERACOES ->' %(n_geracoes), menor_custo)
     print('CAMINHO DE MENOR CUSTO ->', menor_caminho)
-    return pop, lista_apt
+    return pop, lista_apt 
 
 
 
 def principal():
-    qtd_gulosos = 30     # <--- qtd da populacao que vai ser definida por guloso
-    grafo = berlin52     #<---- lista de listas para ser o grafo da funcao gulosa
-    pontos = ponto.keys()  #<---- ponto é o dicionario com chaves de 1 a 52 e suas coordenadas em tuplas
+    inicio_cronometro = time.time()
+    qtd_gulosos = 35
+    grafo = berlin52
+    pontos = ponto.keys()
     taxa_cruzamento = 0.9
     taxa_mutacao = 0.05
     tam_populacao = 100
-    tam_elites = 10  
-    n_geracoes = 100
-    funcao = torneio     #<---- a funcao usada é torneio
+    tam_elites = 5
+    n_geracoes = 10
+    funcao = torneio
     pop, lista_apt = evolucao(pontos, tam_populacao, qtd_gulosos, grafo, taxa_cruzamento, taxa_mutacao, n_geracoes, funcao, tam_elites)
+    fim_cronometro = time.time()
+    tempo = fim_cronometro - inicio_cronometro
+    print('T(s) ->', tempo)
     
     
     
