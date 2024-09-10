@@ -1,8 +1,8 @@
 import random
 import math
+import time
 import networkx as nx
 import matplotlib.pyplot as plt
-import time
 
 
 def ler_arquivo(arquivo):
@@ -32,9 +32,9 @@ def vizinho_mais_proximo(grafo):
         distancia_minima = float('inf')
         proximo_vertice = None
         for i in vertices_restantes:
-            distancia = calcular_distancia(grafo[vertice_atual][0],  
-                                        grafo[vertice_atual][1],  
-                                        grafo[i][0], grafo[i][1])
+            distancia = calcular_distancia(grafo[vertice_atual][0],
+                                           grafo[vertice_atual][1],
+                                           grafo[i][0], grafo[i][1])
             if distancia < distancia_minima:
                 distancia_minima = distancia
                 proximo_vertice = i
@@ -45,7 +45,7 @@ def vizinho_mais_proximo(grafo):
         vertice_atual = proximo_vertice
 
     custo += calcular_distancia(grafo[vertice_atual][0], grafo[vertice_atual][1],
-                                grafo[caminho_final[0]][0], 
+                                grafo[caminho_final[0]][0],
                                 grafo[caminho_final[0]][1])
     caminho_final.append(caminho_final[0])
     fim = time.time()
@@ -59,12 +59,14 @@ def imprime_resultados(custos, tempos):
     media_tempos = sum(tempos) / len(tempos)
     print(f"Média dos custos após 30 execuções: {media_custos}")
     print(f"Média dos tempos após 30 execuções: {media_tempos}")
+    return media_custos, media_tempos
 
 
 def salvar_resultados(custos, caminhos, tempos, arquivo_nome):
     with open(arquivo_nome, 'w') as arq_nome:
         for i, (custo, caminho, tempo) in enumerate(zip(custos, caminhos, tempos)):
-            arq_nome.write(f"Execucao {i + 1}: Custo = {custo}, Caminho = {caminho} e Tempo = {tempo}\n")
+            arq_nome.write(
+                f"Execucao {i + 1}: Custo = {custo}, Caminho = {caminho} e Tempo = {tempo}\n")
         media_custos = sum(custos) / len(custos)
         media_tempos = sum(tempos) / len(tempos)
         arq_nome.write(f"Média dos custos após 30 execuções: {media_custos}\n")
@@ -78,9 +80,12 @@ def plot_grafo(grafo, caminho):
     for i in range(len(caminho) - 1):
         G.add_edge(caminho[i], caminho[i + 1])
     pos = nx.get_node_attributes(G, "pos")
-    nx.draw(G, pos, with_labels=False, node_color="lightblue", edge_color="gray")
-    nx.draw_networkx_edges(G, pos, edgelist=[(caminho[i], caminho[i + 1]) 
-                            for i in range(len(caminho) - 1)], edge_color="red")
+    nx.draw(G, pos, with_labels=False, node_color="lightgreen",
+            edge_color="gray", node_size=500, font_size=8)
+    nx.draw_networkx_edges(G, pos, edgelist=[(caminho[i], caminho[i + 1])
+                                             for i in range(len(caminho) - 1)], edge_color="red", width=2)
+    plt.title("Grafo com Caminho do Vizinho Mais Próximo")
+    plt.grid(True)
     plt.show()
 
 
@@ -96,6 +101,7 @@ def main():
         caminhos.append(caminho)
         tempos.append(tempo)
         print(f"Execução {i + 1}: Custo = {custo}")
+
     imprime_resultados(custos, tempos)
     salvar_resultados(custos, caminhos, tempos, "resultados.txt")
     plot_grafo(Grafo, caminhos[0])
