@@ -80,7 +80,7 @@ def plot_grafo(grafo, caminho):
     for i in range(len(caminho) - 1):
         G.add_edge(caminho[i], caminho[i + 1])
     pos = nx.get_node_attributes(G, "pos")
-    nx.draw(G, pos, with_labels=False, node_color="lightgreen",
+    nx.draw(G, pos, with_labels=False, node_color="lightblue",
             edge_color="gray", node_size=500, font_size=8)
     nx.draw_networkx_edges(G, pos, edgelist=[(caminho[i], caminho[i + 1])
                                              for i in range(len(caminho) - 1)], edge_color="red", width=2)
